@@ -106,8 +106,14 @@ label {
 }
 
 .hero-actions,
-.form-actions,
-.email-capture {
+.form-actions {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.email-capture,
+.email-actions {
   display: flex;
   gap: 0.85rem;
   flex-wrap: wrap;
@@ -328,9 +334,53 @@ input:focus {
   align-items: center;
 }
 
+.cta-points {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  color: var(--muted);
+}
+
+.email-capture {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.capture-field {
+  margin: 0;
+}
+
+.field-note {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .email-capture input {
   flex: 1;
   min-width: 220px;
+}
+
+.capture-checkbox {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  margin: 0;
+  color: var(--muted);
+}
+
+.capture-checkbox input {
+  width: auto;
+  margin-top: 0.2rem;
+}
+
+.capture-status {
+  min-height: 1.5rem;
+  margin: 0;
+  color: var(--muted);
+}
+
+.cta-note a {
+  color: var(--accent);
 }
 
 .site-footer {

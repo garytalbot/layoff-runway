@@ -16,6 +16,7 @@ It gives people a fast estimate of:
 - No backend
 - No build step
 - No tracking by default
+- Provider-free interim email capture via `mailto:` + clipboard fallback
 
 ## Project status
 This repo is now public-release ready for a first launch pass:
@@ -26,6 +27,8 @@ This repo is now public-release ready for a first launch pass:
 - web manifest, robots.txt, sitemap.xml added
 - MIT license added
 - Netlify config added with a few sensible security headers
+- provider-free email CTA now opens a prewritten checklist request in the visitor's email app and includes an optional runway snapshot
+- clipboard fallback added so the CTA still works if `mailto:` is flaky
 - git repo initialized and committed
 
 ## Local development
@@ -68,7 +71,7 @@ If you move to a custom domain later, update the canonical / OG / sitemap URLs.
 - Future pushes to `main` redeploy automatically
 
 ## Immediate next product moves
-1. Wire the email form to Buttondown, Beehiiv, or ConvertKit.
+1. Replace the interim `mailto:` CTA with Buttondown, Beehiiv, or ConvertKit once the offer proves it can pull replies.
 2. Add privacy-friendly analytics.
 3. Put a real domain on it.
 4. Post it where recently laid-off people actually gather.

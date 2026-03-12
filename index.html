@@ -277,19 +277,38 @@
           </div>
         </section>
 
-        <section class="panel cta-panel">
+        <section class="panel cta-panel" id="checklist">
           <div>
-            <p class="eyebrow">Lead capture</p>
-            <h2>Get the layoff survival checklist</h2>
+            <p class="eyebrow">Email follow-up</p>
+            <h2>Get the layoff survival checklist by email</h2>
             <p>
-              A tight follow-up offer for launch: collect interest now, then wire it to Buttondown, Beehiiv,
-              or ConvertKit when the email rail is ready.
+              This CTA works today without a backend: it opens a prewritten email to Gary so someone can ask
+              for the checklist without creating an account or feeding a mystery form vendor.
             </p>
-            <p class="cta-note">No email is stored yet in this MVP. The box is here to validate the offer before plumbing it in.</p>
+            <ul class="cta-points">
+              <li>No backend, no signup wall, no bank connection.</li>
+              <li>Sent from the visitor's own email app.</li>
+              <li>They can optionally include their current runway snapshot for a more useful reply.</li>
+            </ul>
+            <p class="cta-note">
+              The site does not store the address typed here. When they hit send, the message goes straight
+              from their mail app to <a href="mailto:GaryTalbot1987@gmail.com">GaryTalbot1987@gmail.com</a>.
+            </p>
           </div>
-          <form class="email-capture" onsubmit="event.preventDefault(); alert('Email capture is still a placeholder in this MVP. Wire Buttondown, Beehiiv, or ConvertKit before launch traffic hits.');">
-            <input type="email" placeholder="you@example.com" aria-label="Email address" />
-            <button class="button button-primary" type="submit">Send me the checklist</button>
+          <form id="email-capture-form" class="email-capture">
+            <label class="capture-field" for="capture-email">
+              Best reply email <span class="field-note">optional if you're sending from it</span>
+              <input id="capture-email" name="email" type="email" placeholder="you@example.com" aria-label="Best reply email" />
+            </label>
+            <label class="capture-checkbox" for="include-snapshot">
+              <input id="include-snapshot" name="includeSnapshot" type="checkbox" checked />
+              <span>Include my current runway snapshot in the draft email</span>
+            </label>
+            <div class="email-actions">
+              <button class="button button-primary" type="submit">Open email draft</button>
+              <button class="button button-secondary" id="copy-email-button" type="button">Copy email address</button>
+            </div>
+            <p id="capture-status" class="capture-status" aria-live="polite"></p>
           </form>
         </section>
 

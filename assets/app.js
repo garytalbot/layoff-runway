@@ -13,6 +13,14 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 const form = document.getElementById('runway-form');
 const calculateButton = document.getElementById('calculate-button');
 const resetButton = document.getElementById('reset-button');
+const emailCaptureForm = document.getElementById('email-capture-form');
+const captureEmailInput = document.getElementById('capture-email');
+const includeSnapshotCheckbox = document.getElementById('include-snapshot');
+const copyEmailButton = document.getElementById('copy-email-button');
+const captureStatus = document.getElementById('capture-status');
+
+const contactEmail = 'GaryTalbot1987@gmail.com';
+let latestSnapshot = null;
 
 const output = {
   runwayMonths: document.getElementById('runway-months'),
@@ -103,6 +111,60 @@ function buildRecommendations(runwayMonths, monthlyBurn, monthlyIncome, topCuts)
   return items;
 }
 
+function setCaptureStatus(message, tone = '') {
+  if (!captureStatus) return;
+  captureStatus.textContent = message;
+  captureStatus.className = ['capture-status', tone].filter(Boolean).join(' ');
+}
+
+function buildChecklistRequestBody() {
+  const lines = ['Hi Gary,', '', 'Please send me the Layoff Runway survival checklist.'];
+  const replyEmail = captureEmailInput?.value.trim();
+
+  if (replyEmail) {
+    lines.push('', `Best reply email: ${replyEmail}`);
+  }
+
+  if (includeSnapshotCheckbox?.checked && latestSnapshot) {
+    lines.push(
+      '',
+      'Current runway snapshot:',
+      `- Estimated runway: ${latestSnapshot.runwayLabel}`,
+      `- Total available funds: ${latestSnapshot.totalFunds}`,
+      `- Monthly burn: ${latestSnapshot.monthlyBurn}`,
+      `- Monthly income: ${latestSnapshot.monthlyIncome}`,
+      `- Cash-out date: ${latestSnapshot.cashOutDate}`,
+      `- Biggest cost-cut target: ${latestSnapshot.topCostCut}`
+    );
+  }
+
+  lines.push('', 'Thanks.');
+  return lines.join('\n');
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const tempInput = document.createElement('input');
+  tempInput.value = text;
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  document.execCommand('copy');
+  document.body.removeChild(tempInput);
+}
+
+function openChecklistEmailDraft() {
+  const subject = 'Layoff Runway checklist request';
+  const body = buildChecklistRequestBody();
+  const params = new URLSearchParams({ subject, body });
+
+  setCaptureStatus('Opening your email draft. If nothing happens, use the copy button and send the request manually.', 'status-good');
+  window.location.href = `mailto:${contactEmail}?${params.toString()}`;
+}
+
 function render() {
   const savings = readNumber('savings');
   const checking = readNumber('checking');
@@ -138,14 +200,17 @@ function render() {
   output.target6.textContent = currency.format(targetSpend(totalFunds, monthlyIncome, 6));
   output.target12.textContent = currency.format(targetSpend(totalFunds, monthlyIncome, 12));
 
+  let cashOutLabel = 'Cash-flow positive';
+
   if (Number.isFinite(runwayMonths)) {
     output.runwayMonths.textContent = runwayMonths.toFixed(1);
     const cashOut = new Date();
     cashOut.setDate(cashOut.getDate() + Math.round(runwayMonths * 30.4));
-    output.cashOutDate.textContent = dateFormatter.format(cashOut);
+    cashOutLabel = dateFormatter.format(cashOut);
+    output.cashOutDate.textContent = cashOutLabel;
   } else {
     output.runwayMonths.textContent = '∞';
-    output.cashOutDate.textContent = 'Cash-flow positive';
+    output.cashOutDate.textContent = cashOutLabel;
   }
 
   const summary = buildSummary(Number.isFinite(runwayMonths) ? runwayMonths : 99, monthlyBurn, topCuts);
@@ -166,6 +231,17 @@ function render() {
   )
     .map((item) => `<li>${item}</li>`)
     .join('');
+
+  latestSnapshot = {
+    runwayLabel: Number.isFinite(runwayMonths) ? `${runwayMonths.toFixed(1)} months` : 'Cash-flow positive',
+    totalFunds: currency.format(totalFunds),
+    monthlyBurn: monthlyBurn > 0 ? currency.format(monthlyBurn) : 'Cash-flow positive',
+    monthlyIncome: currency.format(monthlyIncome),
+    cashOutDate: cashOutLabel,
+    topCostCut: topCuts[0]
+      ? `${topCuts[0].label} (${currency.format(topCuts[0].value)} / month)`
+      : 'No recurring expenses entered yet',
+  };
 }
 
 calculateButton.addEventListener('click', render);
@@ -177,4 +253,19 @@ resetButton.addEventListener('click', () => {
 });
 
 form.addEventListener('input', render);
+
+emailCaptureForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  openChecklistEmailDraft();
+});
+
+copyEmailButton?.addEventListener('click', async () => {
+  try {
+    await copyText(contactEmail);
+    setCaptureStatus(`Copied ${contactEmail}. If your email app refuses to behave, send the checklist request there manually.`, 'status-good');
+  } catch (error) {
+    setCaptureStatus(`Copy failed. Send the request manually to ${contactEmail}.`, 'status-warn');
+  }
+});
+
 render();

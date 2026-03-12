@@ -37,6 +37,8 @@ This repo is now public-release ready for a first launch pass:
 - MIT license added
 - Netlify config added with a few sensible security headers
 - provider-free email CTA now opens a prewritten checklist request in the visitor's email app and includes an optional runway snapshot
+- results now include a simple interpretation guide so people know what to do with a 0–3, 3–6, or 6+ month result
+- shareable plain-English snapshot button added for pasting the result to a partner, roommate, friend, or advisor
 - clipboard fallback added so the CTA still works if `mailto:` is flaky
 - git repo initialized and committed
 

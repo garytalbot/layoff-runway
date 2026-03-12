@@ -66,6 +66,22 @@
                   "@type": "Answer",
                   "text": "Use practical after-tax estimates for cash, severance, unemployment, and your real monthly costs. Rough-but-honest numbers are better than fake precision."
                 }
+              },
+              {
+                "@type": "Question",
+                "name": "What if my runway is under 3 months?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Treat it like triage, not a personal failure. Reduce the biggest recurring expense first, apply for unemployment or hardship relief immediately, and tell one trusted person the number so you can make decisions with backup."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I share my result with a partner or friend?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Layoff Runway now includes a copyable plain-English snapshot so you can paste your runway summary into a text, email, or group chat without forwarding a whole spreadsheet."
+                }
               }
             ]
           }
@@ -259,6 +275,25 @@
               <h3>Survival summary</h3>
               <ul id="recommendation-list" class="recommendation-list"></ul>
             </article>
+
+            <article class="detail-card">
+              <h3>How to read this number</h3>
+              <p id="runway-zone-tag" class="scenario-tag"></p>
+              <p id="runway-zone-copy" class="scenario-copy"></p>
+              <ul id="scenario-action-list" class="recommendation-list"></ul>
+            </article>
+
+            <article class="detail-card">
+              <h3>Shareable snapshot</h3>
+              <p class="scenario-copy">
+                Need a second set of eyes? Copy a calm plain-English summary for a partner, roommate,
+                or friend instead of shipping them a cursed spreadsheet screenshot.
+              </p>
+              <div class="share-actions">
+                <button class="button button-secondary" id="copy-summary-button" type="button">Copy summary</button>
+              </div>
+              <p id="share-status" class="capture-status" aria-live="polite"></p>
+            </article>
           </div>
         </section>
 
@@ -340,6 +375,18 @@
               <h3>Who is this for?</h3>
               <p>
                 People who just got laid off, expect a layoff soon, or need a simple runway check without adopting an entire budgeting religion.
+              </p>
+            </article>
+            <article class="faq-card">
+              <h3>What if my runway is under 3 months?</h3>
+              <p>
+                Treat it like triage, not a verdict on your character. Go after the biggest recurring expense first, apply for unemployment or hardship relief immediately, and tell one trusted person the number so you are not carrying it alone.
+              </p>
+            </article>
+            <article class="faq-card">
+              <h3>Can I share my result with someone helping me?</h3>
+              <p>
+                Yes. Use the copyable snapshot in the results section to paste a plain-English summary into a text, email, or chat with a partner, roommate, family member, or advisor.
               </p>
             </article>
           </div>

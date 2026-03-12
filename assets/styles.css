@@ -113,7 +113,8 @@ label {
 }
 
 .email-capture,
-.email-actions {
+.email-actions,
+.share-actions {
   display: flex;
   gap: 0.85rem;
   flex-wrap: wrap;
@@ -304,6 +305,25 @@ input:focus {
 .recommendation-list {
   margin: 0;
   padding-left: 1.2rem;
+}
+
+.scenario-tag {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 0.85rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scenario-copy {
+  margin-bottom: 0.9rem;
+  color: var(--muted);
 }
 
 .checklist-grid {

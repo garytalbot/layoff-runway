@@ -17,7 +17,9 @@ const emailCaptureForm = document.getElementById('email-capture-form');
 const captureEmailInput = document.getElementById('capture-email');
 const includeSnapshotCheckbox = document.getElementById('include-snapshot');
 const copyEmailButton = document.getElementById('copy-email-button');
+const copySummaryButton = document.getElementById('copy-summary-button');
 const captureStatus = document.getElementById('capture-status');
+const shareStatus = document.getElementById('share-status');
 
 const contactEmail = 'GaryTalbot1987@gmail.com';
 let latestSnapshot = null;
@@ -34,6 +36,9 @@ const output = {
   target12: document.getElementById('target-12'),
   costCutList: document.getElementById('cost-cut-list'),
   recommendationList: document.getElementById('recommendation-list'),
+  runwayZoneTag: document.getElementById('runway-zone-tag'),
+  runwayZoneCopy: document.getElementById('runway-zone-copy'),
+  scenarioActionList: document.getElementById('scenario-action-list'),
 };
 
 const defaultValues = Object.fromEntries(
@@ -111,10 +116,85 @@ function buildRecommendations(runwayMonths, monthlyBurn, monthlyIncome, topCuts)
   return items;
 }
 
+function getScenarioGuidance(runwayMonths, monthlyBurn, topCuts) {
+  const biggestLever = topCuts[0]?.label.toLowerCase() || 'your biggest recurring expense';
+
+  if (monthlyBurn <= 0) {
+    return {
+      tone: 'status-good',
+      tag: 'Cash-flow positive',
+      copy:
+        'Right now your income covers your adjusted spending. That buys breathing room, but the smart move is still to protect the margin and keep cash easy to reach.',
+      actions: [
+        'Keep at least one month of core bills liquid.',
+        `Do a quick audit of ${biggestLever} and other obvious waste before it sneaks back up.`,
+        'Use the copied summary to stay aligned with anyone sharing the budget.',
+      ],
+    };
+  }
+
+  if (runwayMonths < 3) {
+    return {
+      tone: 'status-bad',
+      tag: '0–3 months: protect the floor',
+      copy:
+        'This is triage mode. The goal is not elegant optimization. The goal is to buy time this week with the biggest moves available.',
+      actions: [
+        `Start with ${biggestLever}, not the tiny nonsense.`,
+        'Apply for unemployment, hardship plans, and payment relief immediately.',
+        'Tell one trusted person the number so you are not making every decision alone.',
+      ],
+    };
+  }
+
+  if (runwayMonths < 6) {
+    return {
+      tone: 'status-warn',
+      tag: '3–6 months: stabilize early',
+      copy:
+        'You still have room to choose, which is exactly why now is the time to tighten the plan before the calendar gets rude.',
+      actions: [
+        `Attack ${biggestLever} before the smaller categories.`,
+        'Set a weekly spending cap and a simple job-search rhythm.',
+        'Copy the summary and get aligned with a partner, roommate, or friend now instead of after the panic spike.',
+      ],
+    };
+  }
+
+  return {
+    tone: 'status-good',
+    tag: '6+ months: use the room well',
+    copy:
+      'This is real breathing room. The win here is using it deliberately so you keep options, not drifting until the number gets dramatically less charming.',
+    actions: [
+      `Trim the obvious waste, starting with ${biggestLever}.`,
+      'Pick a spending level that protects a 6–12 month runway.',
+      'Use the copied snapshot to pressure-test the plan with somebody you trust.',
+    ],
+  };
+}
+
+function buildShareSummary(snapshot) {
+  if (!snapshot) return '';
+
+  return [
+    `Layoff Runway snapshot: about ${snapshot.runwayLabel}, ${snapshot.monthlyBurn} monthly burn, likely cash-out ${snapshot.cashOutDate}.`,
+    `Biggest cost lever: ${snapshot.topCostCut}.`,
+    `Context: ${snapshot.guidanceTag}. ${snapshot.guidanceCopy}`,
+    'Private/no-signup calculator: https://garytalbot.github.io/layoff-runway/',
+  ].join(' ');
+}
+
 function setCaptureStatus(message, tone = '') {
   if (!captureStatus) return;
   captureStatus.textContent = message;
   captureStatus.className = ['capture-status', tone].filter(Boolean).join(' ');
+}
+
+function setShareStatus(message, tone = '') {
+  if (!shareStatus) return;
+  shareStatus.textContent = message;
+  shareStatus.className = ['capture-status', tone].filter(Boolean).join(' ');
 }
 
 function buildChecklistRequestBody() {
@@ -213,9 +293,12 @@ function render() {
     output.cashOutDate.textContent = cashOutLabel;
   }
 
-  const summary = buildSummary(Number.isFinite(runwayMonths) ? runwayMonths : 99, monthlyBurn, topCuts);
+  const normalizedRunwayMonths = Number.isFinite(runwayMonths) ? runwayMonths : 99;
+  const summary = buildSummary(normalizedRunwayMonths, monthlyBurn, topCuts);
+  const guidance = getScenarioGuidance(normalizedRunwayMonths, monthlyBurn, topCuts);
+
   output.summaryText.textContent = summary;
-  output.summaryText.className = `summary-text ${monthlyBurn <= 0 ? 'status-good' : runwayMonths < 3 ? 'status-bad' : runwayMonths < 6 ? 'status-warn' : 'status-good'}`;
+  output.summaryText.className = `summary-text ${guidance.tone}`;
 
   output.costCutList.innerHTML = topCuts.length
     ? topCuts
@@ -223,25 +306,30 @@ function render() {
         .join('')
     : '<li>No recurring expenses entered yet.</li>';
 
-  output.recommendationList.innerHTML = buildRecommendations(
-    Number.isFinite(runwayMonths) ? runwayMonths : 99,
-    monthlyBurn,
-    monthlyIncome,
-    topCuts
-  )
+  output.recommendationList.innerHTML = buildRecommendations(normalizedRunwayMonths, monthlyBurn, monthlyIncome, topCuts)
     .map((item) => `<li>${item}</li>`)
     .join('');
 
+  output.runwayZoneTag.textContent = guidance.tag;
+  output.runwayZoneTag.className = `scenario-tag ${guidance.tone}`;
+  output.runwayZoneCopy.textContent = guidance.copy;
+  output.scenarioActionList.innerHTML = guidance.actions.map((item) => `<li>${item}</li>`).join('');
+  setShareStatus('');
+
   latestSnapshot = {
-    runwayLabel: Number.isFinite(runwayMonths) ? `${runwayMonths.toFixed(1)} months` : 'Cash-flow positive',
+    runwayLabel: Number.isFinite(runwayMonths) ? `${runwayMonths.toFixed(1)} months` : 'cash-flow positive',
     totalFunds: currency.format(totalFunds),
-    monthlyBurn: monthlyBurn > 0 ? currency.format(monthlyBurn) : 'Cash-flow positive',
+    monthlyBurn: monthlyBurn > 0 ? currency.format(monthlyBurn) : 'cash-flow positive',
     monthlyIncome: currency.format(monthlyIncome),
     cashOutDate: cashOutLabel,
     topCostCut: topCuts[0]
       ? `${topCuts[0].label} (${currency.format(topCuts[0].value)} / month)`
       : 'No recurring expenses entered yet',
+    guidanceTag: guidance.tag,
+    guidanceCopy: guidance.copy,
   };
+
+  latestSnapshot.shareText = buildShareSummary(latestSnapshot);
 }
 
 calculateButton.addEventListener('click', render);
@@ -265,6 +353,20 @@ copyEmailButton?.addEventListener('click', async () => {
     setCaptureStatus(`Copied ${contactEmail}. If your email app refuses to behave, send the checklist request there manually.`, 'status-good');
   } catch (error) {
     setCaptureStatus(`Copy failed. Send the request manually to ${contactEmail}.`, 'status-warn');
+  }
+});
+
+copySummaryButton?.addEventListener('click', async () => {
+  if (!latestSnapshot?.shareText) {
+    setShareStatus('Run the calculator first, then copy the summary.', 'status-warn');
+    return;
+  }
+
+  try {
+    await copyText(latestSnapshot.shareText);
+    setShareStatus('Copied a plain-English snapshot you can paste into a text, email, or chat.', 'status-good');
+  } catch (error) {
+    setShareStatus('Copy failed. You can still select the results manually.', 'status-warn');
   }
 });
 

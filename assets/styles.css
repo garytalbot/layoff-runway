@@ -120,6 +120,12 @@ label {
   flex-wrap: wrap;
 }
 
+.share-note {
+  margin: 0.85rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
 .button {
   appearance: none;
   border: 0;

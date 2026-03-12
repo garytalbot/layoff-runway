@@ -18,6 +18,8 @@ const captureEmailInput = document.getElementById('capture-email');
 const includeSnapshotCheckbox = document.getElementById('include-snapshot');
 const copyEmailButton = document.getElementById('copy-email-button');
 const copySummaryButton = document.getElementById('copy-summary-button');
+const copyLinkButton = document.getElementById('copy-link-button');
+const shareLinkButton = document.getElementById('share-link-button');
 const captureStatus = document.getElementById('capture-status');
 const shareStatus = document.getElementById('share-status');
 
@@ -332,10 +334,44 @@ function buildShareSummary(snapshot) {
     `Bridge plan: ${snapshot.bridgeLine}`,
     snapshot.bestComparison ? `Quick what-if: ${snapshot.bestComparison}` : '',
     `Context: ${snapshot.guidanceTag}. ${snapshot.guidanceCopy}`,
-    'Private/no-signup calculator: https://garytalbot.github.io/layoff-runway/',
+    `Private/no-signup calculator: ${snapshot.shareUrl || 'https://garytalbot.github.io/layoff-runway/'}`,
   ]
     .filter(Boolean)
     .join(' ');
+}
+
+function buildShareUrl() {
+  const params = new URLSearchParams();
+
+  Array.from(form.elements)
+    .filter((field) => field.name)
+    .forEach((field) => {
+      const value = field.value;
+      if (value !== '' && value !== field.defaultValue) {
+        params.set(field.name, value);
+      }
+    });
+
+  const url = new URL(window.location.href);
+  const query = params.toString();
+  url.search = query;
+  url.hash = 'results';
+  return url.toString();
+}
+
+function loadStateFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  let didLoad = false;
+
+  Array.from(form.elements)
+    .filter((field) => field.name)
+    .forEach((field) => {
+      if (!params.has(field.name)) return;
+      field.value = params.get(field.name) || '';
+      didLoad = true;
+    });
+
+  return didLoad;
 }
 
 function setCaptureStatus(message, tone = '') {
@@ -530,6 +566,7 @@ function render() {
     guidanceCopy: guidance.copy,
   };
 
+  latestSnapshot.shareUrl = buildShareUrl();
   latestSnapshot.shareText = buildShareSummary(latestSnapshot);
 }
 
@@ -571,4 +608,50 @@ copySummaryButton?.addEventListener('click', async () => {
   }
 });
 
+copyLinkButton?.addEventListener('click', async () => {
+  if (!latestSnapshot?.shareUrl) {
+    setShareStatus('Run the calculator first, then copy the link.', 'status-warn');
+    return;
+  }
+
+  try {
+    await copyText(latestSnapshot.shareUrl);
+    setShareStatus('Copied a shareable link with this exact scenario baked in.', 'status-good');
+  } catch (error) {
+    setShareStatus('Copy failed. You can still copy the URL from the address bar after calculating.', 'status-warn');
+  }
+});
+
+shareLinkButton?.addEventListener('click', async () => {
+  if (!latestSnapshot?.shareUrl) {
+    setShareStatus('Run the calculator first, then share the result.', 'status-warn');
+    return;
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Layoff Runway',
+        text: latestSnapshot.shareText,
+        url: latestSnapshot.shareUrl,
+      });
+      setShareStatus('Shared result.', 'status-good');
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') {
+        setShareStatus('Share canceled.', 'status-warn');
+        return;
+      }
+    }
+  }
+
+  try {
+    await copyText(latestSnapshot.shareUrl);
+    setShareStatus('Native share is not available here, so I copied the exact-result link instead.', 'status-good');
+  } catch (error) {
+    setShareStatus('Share failed. Copy the URL from the address bar after calculating.', 'status-warn');
+  }
+});
+
+loadStateFromUrl();
 render();

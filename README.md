@@ -47,11 +47,10 @@ Then open <http://localhost:8080>.
 - `netlify.toml` — zero-build Netlify deploy config
 
 ## Before going fully public
-A couple placeholders still need a real production URL:
-- `index.html` canonical / OG URLs currently use `https://example.com/`
-- `sitemap.xml` currently uses `https://example.com/`
+Current live/public URL target:
+- `https://garytalbot.github.io/layoff-runway/`
 
-Swap those to the final domain before launch.
+If you move to a custom domain later, update the canonical / OG / sitemap URLs.
 
 ## Fastest deploy paths
 ### Option 1: Netlify Drop or Netlify repo import
@@ -61,9 +60,9 @@ Swap those to the final domain before launch.
 - No build command needed
 
 ### Option 2: GitHub Pages
-- Push the repo to GitHub
-- Enable Pages from the repo root on the default branch
-- Update the canonical / OG / sitemap URLs to the Pages URL or custom domain
+- Already configured for this repo
+- URL: <https://garytalbot.github.io/layoff-runway/>
+- Future pushes to `main` redeploy automatically
 
 ## Immediate next product moves
 1. Wire the email form to Buttondown, Beehiiv, or ConvertKit.

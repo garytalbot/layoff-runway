@@ -11,6 +11,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 });
 
 const form = document.getElementById('runway-form');
+const presetList = document.getElementById('preset-list');
 const calculateButton = document.getElementById('calculate-button');
 const resetButton = document.getElementById('reset-button');
 const emailCaptureForm = document.getElementById('email-capture-form');
@@ -25,6 +26,7 @@ const shareStatus = document.getElementById('share-status');
 
 const contactEmail = 'GaryTalbot1987@gmail.com';
 let latestSnapshot = null;
+let activePreset = 'custom';
 
 const output = {
   runwayMonths: document.getElementById('runway-months'),
@@ -59,9 +61,150 @@ const expenseLabels = {
   misc: 'Subscriptions / misc',
 };
 
+const starterPresets = [
+  {
+    id: 'default',
+    label: 'Typical salaried reset',
+    note: 'Moderate savings, severance, unemployment, and one practical round of cuts.',
+    values: {
+      savings: 18000,
+      checking: 4500,
+      severance: 9000,
+      oneTimeExpense: 0,
+      unemployment: 1800,
+      otherIncome: 0,
+      sideIncome: 400,
+      plannedCuts: 250,
+      rent: 2200,
+      utilities: 220,
+      groceries: 450,
+      insurance: 380,
+      transportation: 240,
+      debt: 320,
+      phoneInternet: 140,
+      misc: 160,
+    },
+  },
+  {
+    id: 'tight-renter',
+    label: 'Tight renter runway',
+    note: 'Little severance, little cushion, rent doing crime scene numbers.',
+    values: {
+      savings: 5200,
+      checking: 1400,
+      severance: 0,
+      oneTimeExpense: 300,
+      unemployment: 1450,
+      otherIncome: 0,
+      sideIncome: 150,
+      plannedCuts: 125,
+      rent: 1850,
+      utilities: 170,
+      groceries: 320,
+      insurance: 260,
+      transportation: 180,
+      debt: 210,
+      phoneInternet: 110,
+      misc: 120,
+    },
+  },
+  {
+    id: 'family-bridge',
+    label: 'Family + mortgage bridge',
+    note: 'Higher fixed costs, severance cushion, and a spouse or other small income helping keep the floor up.',
+    values: {
+      savings: 26000,
+      checking: 7000,
+      severance: 15000,
+      oneTimeExpense: 1200,
+      unemployment: 2200,
+      otherIncome: 1400,
+      sideIncome: 0,
+      plannedCuts: 450,
+      rent: 3100,
+      utilities: 380,
+      groceries: 900,
+      insurance: 760,
+      transportation: 520,
+      debt: 540,
+      phoneInternet: 210,
+      misc: 260,
+    },
+  },
+  {
+    id: 'lean-contracting',
+    label: 'Lean contractor rebound',
+    note: 'Low overhead, no severance, but freelance income already trying to keep the lights on.',
+    values: {
+      savings: 9000,
+      checking: 2500,
+      severance: 0,
+      oneTimeExpense: 0,
+      unemployment: 0,
+      otherIncome: 0,
+      sideIncome: 1800,
+      plannedCuts: 200,
+      rent: 1350,
+      utilities: 150,
+      groceries: 300,
+      insurance: 240,
+      transportation: 120,
+      debt: 90,
+      phoneInternet: 95,
+      misc: 100,
+    },
+  },
+];
+
 function readNumber(name) {
   const value = Number(form.elements[name].value);
   return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+function updatePresetSelection() {
+  if (!presetList) return;
+
+  presetList.querySelectorAll('.preset-card').forEach((button) => {
+    const isActive = button.dataset.presetId === activePreset;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function renderPresetButtons() {
+  if (!presetList) return;
+
+  presetList.innerHTML = starterPresets
+    .map(
+      (preset) => `
+        <button class="preset-card" type="button" data-preset-id="${preset.id}" aria-pressed="false">
+          <span class="preset-title">${preset.label}</span>
+          <span class="preset-note">${preset.note}</span>
+        </button>
+      `
+    )
+    .join('');
+
+  presetList.addEventListener('click', (event) => {
+    const button = event.target.closest('.preset-card');
+    if (!button) return;
+
+    const preset = starterPresets.find((entry) => entry.id === button.dataset.presetId);
+    if (!preset) return;
+
+    Object.entries(preset.values).forEach(([name, value]) => {
+      if (form.elements[name]) {
+        form.elements[name].value = value;
+      }
+    });
+
+    activePreset = preset.id;
+    updatePresetSelection();
+    render();
+    form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  updatePresetSelection();
 }
 
 function targetSpend(totalFunds, monthlyIncome, months) {
@@ -575,10 +718,16 @@ resetButton.addEventListener('click', () => {
   Object.entries(defaultValues).forEach(([name, value]) => {
     form.elements[name].value = value;
   });
+  activePreset = 'default';
+  updatePresetSelection();
   render();
 });
 
-form.addEventListener('input', render);
+form.addEventListener('input', () => {
+  activePreset = 'custom';
+  updatePresetSelection();
+  render();
+});
 
 emailCaptureForm?.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -653,5 +802,6 @@ shareLinkButton?.addEventListener('click', async () => {
   }
 });
 
-loadStateFromUrl();
+activePreset = loadStateFromUrl() ? 'custom' : 'default';
+renderPresetButtons();
 render();

@@ -43,6 +43,7 @@ This repo is now public-release ready for a first launch pass:
 - shareable plain-English snapshot button added for pasting the result to a partner, roommate, friend, or advisor
 - exact-result share links added, so the current scenario can be copied/shared as a URL with the numbers loaded on open — no backend required
 - copied snapshots now include the nearest bridge-to-safer-runway line so the summary travels with a next-step number, not just vibes
+- starter scenarios now let people load common layoff situations in one click, reducing blank-page friction and giving them a sane place to begin before editing their own numbers
 - clipboard fallback added so the CTA still works if `mailto:` is flaky
 - git repo initialized and committed
 

@@ -31,6 +31,7 @@ const output = {
   monthlyBurn: document.getElementById('monthly-burn'),
   cashOutDate: document.getElementById('cash-out-date'),
   monthlyIncome: document.getElementById('monthly-income'),
+  comparisonList: document.getElementById('comparison-list'),
   bridgePlanList: document.getElementById('bridge-plan-list'),
   costCutList: document.getElementById('cost-cut-list'),
   recommendationList: document.getElementById('recommendation-list'),
@@ -211,6 +212,117 @@ function getScenarioGuidance(runwayMonths, monthlyBurn, topCuts) {
   };
 }
 
+function roundToStep(value, step = 50) {
+  if (value <= 0) return 0;
+  return Math.round(value / step) * step;
+}
+
+function getModeledCut(sourceValue, ratio, options = {}) {
+  if (sourceValue <= 0) return 0;
+
+  const { min = 50, max = 600, step = 50 } = options;
+  const modeledValue = Math.max(min, roundToStep(sourceValue * ratio, step));
+  return Math.min(sourceValue, Math.min(max, modeledValue));
+}
+
+function formatRunwayLabel(runwayMonths) {
+  return Number.isFinite(runwayMonths) ? `${runwayMonths.toFixed(1)} months` : 'Cash-flow positive';
+}
+
+function getRunwayDeltaLabel(baseRunwayMonths, scenarioRunwayMonths) {
+  if (!Number.isFinite(scenarioRunwayMonths)) {
+    return 'Crosses into cash-flow positive';
+  }
+
+  if (!Number.isFinite(baseRunwayMonths)) {
+    return 'Still cash-flow positive';
+  }
+
+  const delta = scenarioRunwayMonths - baseRunwayMonths;
+  if (Math.abs(delta) < 0.05) {
+    return 'No material change';
+  }
+
+  return `${delta > 0 ? '+' : ''}${delta.toFixed(1)} months`;
+}
+
+function getScenarioTone(scenarioRunwayMonths) {
+  if (!Number.isFinite(scenarioRunwayMonths) || scenarioRunwayMonths >= 6) {
+    return 'status-good';
+  }
+
+  if (scenarioRunwayMonths >= 3) {
+    return 'status-warn';
+  }
+
+  return 'status-bad';
+}
+
+function getComparisonScenarios({ totalFunds, monthlyBurn, runwayMonths, topCuts, rent }) {
+  if (monthlyBurn <= 0) {
+    return [
+      {
+        title: 'Already cash-flow positive',
+        deltaLabel: 'Protected',
+        runwayLabel: 'Cash-flow positive',
+        burnLabel: 'Income already covers adjusted spending',
+        detail:
+          'Your current plan already clears monthly costs. The move now is protecting the margin and keeping cash handy, not inventing fake austerity for the love of drama.',
+        changeLabel: 'Use the breathing room to build reserves and keep recurring costs honest.',
+        tone: 'status-good',
+      },
+    ];
+  }
+
+  const primaryExpense = topCuts[0];
+  const primaryLabel = primaryExpense?.label.toLowerCase() || 'your biggest recurring expense';
+  const housingCut = rent > 0 ? getModeledCut(rent, 0.15, { min: 100, max: 600, step: 50 }) : 0;
+  const biggestLeverCut = primaryExpense ? getModeledCut(primaryExpense.value, 0.15, { min: 50, max: 500, step: 50 }) : 250;
+  const leverCut = housingCut || biggestLeverCut;
+  const leverTitle = housingCut > 0 ? 'Housing reset' : `Trim ${primaryLabel}`;
+  const leverDetail = housingCut > 0
+    ? `Model a roommate, sublet, refinance, or cheaper place by freeing up about ${currency.format(housingCut)} / month in housing.`
+    : `Model a roughly ${currency.format(leverCut)} / month trim in ${primaryLabel} and see what it does to the calendar.`;
+  const incomeBoost = 500;
+
+  return [
+    {
+      title: leverTitle,
+      burnDelta: leverCut,
+      changeLabel: `${currency.format(leverCut)} / month less spend`,
+      detail: leverDetail,
+    },
+    {
+      title: 'Bridge income',
+      burnDelta: incomeBoost,
+      changeLabel: `${currency.format(incomeBoost)} / month more income`,
+      detail:
+        'Model temp work, freelancing, consulting, or any boring little income bridge that keeps the floor from collapsing.',
+    },
+    {
+      title: 'Stack both moves',
+      burnDelta: leverCut + incomeBoost,
+      changeLabel: `${currency.format(leverCut)} less spend + ${currency.format(incomeBoost)} more income`,
+      detail:
+        'Combine the biggest modeled cut with a modest income bridge to see the non-heroic version of buying more time.',
+    },
+  ].map((scenario) => {
+    const scenarioMonthlyBurn = monthlyBurn - scenario.burnDelta;
+    const scenarioRunwayMonths = calculateRunwayMonths(totalFunds, scenarioMonthlyBurn);
+
+    return {
+      ...scenario,
+      deltaLabel: getRunwayDeltaLabel(runwayMonths, scenarioRunwayMonths),
+      runwayLabel: formatRunwayLabel(scenarioRunwayMonths),
+      burnLabel:
+        scenarioMonthlyBurn > 0
+          ? `${currency.format(scenarioMonthlyBurn)} burn / month`
+          : 'Income covers adjusted spending',
+      tone: getScenarioTone(scenarioRunwayMonths),
+    };
+  });
+}
+
 function buildShareSummary(snapshot) {
   if (!snapshot) return '';
 
@@ -218,9 +330,12 @@ function buildShareSummary(snapshot) {
     `Layoff Runway snapshot: about ${snapshot.runwayLabel}, ${snapshot.monthlyBurn} monthly burn, likely cash-out ${snapshot.cashOutDate}.`,
     `Biggest cost lever: ${snapshot.topCostCut}.`,
     `Bridge plan: ${snapshot.bridgeLine}`,
+    snapshot.bestComparison ? `Quick what-if: ${snapshot.bestComparison}` : '',
     `Context: ${snapshot.guidanceTag}. ${snapshot.guidanceCopy}`,
     'Private/no-signup calculator: https://garytalbot.github.io/layoff-runway/',
-  ].join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 }
 
 function setCaptureStatus(message, tone = '') {
@@ -311,6 +426,13 @@ function render() {
   const runwayMonths = calculateRunwayMonths(totalFunds, monthlyBurn);
   const topCuts = getTopExpenseCategories();
   const bridgePlans = getBridgePlans(totalFunds, monthlyIncome, adjustedExpenses, monthlyBurn, runwayMonths);
+  const comparisonScenarios = getComparisonScenarios({
+    totalFunds,
+    monthlyBurn,
+    runwayMonths,
+    topCuts,
+    rent: readNumber('rent'),
+  });
 
   output.totalFunds.textContent = currency.format(totalFunds);
   output.monthlyBurn.textContent = monthlyBurn > 0 ? currency.format(monthlyBurn) : currency.format(0);
@@ -335,6 +457,23 @@ function render() {
 
   output.summaryText.textContent = summary;
   output.summaryText.className = `summary-text ${guidance.tone}`;
+
+  output.comparisonList.innerHTML = comparisonScenarios
+    .map(
+      (scenario) => `
+        <article class="comparison-card">
+          <div class="comparison-header">
+            <p class="comparison-title">${scenario.title}</p>
+            <p class="comparison-delta ${scenario.tone}">${scenario.deltaLabel}</p>
+          </div>
+          <p class="comparison-runway">${scenario.runwayLabel}</p>
+          <p class="comparison-meta">${scenario.changeLabel}</p>
+          <p class="comparison-meta">${scenario.burnLabel}</p>
+          <p class="comparison-copy">${scenario.detail}</p>
+        </article>
+      `
+    )
+    .join('');
 
   output.costCutList.innerHTML = topCuts.length
     ? topCuts
@@ -366,6 +505,10 @@ function render() {
   setShareStatus('');
 
   const nextBridgePlan = bridgePlans.find((plan) => plan.state === 'gap');
+  const bestComparison = comparisonScenarios.reduce((best, scenario) => {
+    const getComparableRunway = (value) => (value === 'Cash-flow positive' ? Number.POSITIVE_INFINITY : Number.parseFloat(value));
+    return getComparableRunway(scenario.runwayLabel) > getComparableRunway(best.runwayLabel) ? scenario : best;
+  }, comparisonScenarios[0]);
 
   latestSnapshot = {
     runwayLabel: Number.isFinite(runwayMonths) ? `${runwayMonths.toFixed(1)} months` : 'cash-flow positive',
@@ -379,6 +522,10 @@ function render() {
     bridgeLine: nextBridgePlan
       ? `to reach ${nextBridgePlan.months} months, free up about ${currency.format(nextBridgePlan.monthlyGap)} / month in burn or add about ${currency.format(nextBridgePlan.upfrontGap)} upfront.`
       : 'your current plan already clears the common 3, 6, and 12 month checkpoints.',
+    bestComparison:
+      bestComparison && bestComparison.title !== 'Already cash-flow positive'
+        ? `${bestComparison.title} would move the result to ${bestComparison.runwayLabel} (${bestComparison.deltaLabel}).`
+        : '',
     guidanceTag: guidance.tag,
     guidanceCopy: guidance.copy,
   };

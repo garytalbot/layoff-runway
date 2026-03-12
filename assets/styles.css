@@ -300,6 +300,71 @@ input:focus {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.detail-card-span-all {
+  grid-column: 1 / -1;
+}
+
+.comparison-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.comparison-card {
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(2, 6, 23, 0.42);
+}
+
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+}
+
+.comparison-title,
+.comparison-runway,
+.comparison-meta,
+.comparison-copy,
+.comparison-delta {
+  margin: 0;
+}
+
+.comparison-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.comparison-delta {
+  flex-shrink: 0;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(148, 163, 184, 0.08);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.comparison-runway {
+  margin-bottom: 0.35rem;
+  font-size: 1.7rem;
+  font-weight: 800;
+}
+
+.comparison-meta {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.comparison-copy {
+  margin-top: 0.75rem;
+  color: var(--muted);
+}
+
 .target-list,
 .cost-cut-list,
 .recommendation-list {
@@ -484,6 +549,7 @@ input:focus {
   .calculator-grid,
   .stats-grid,
   .detail-grid,
+  .comparison-list,
   .checklist-grid,
   .cta-panel,
   .trust-strip,

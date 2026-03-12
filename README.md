@@ -39,6 +39,7 @@ This repo is now public-release ready for a first launch pass:
 - provider-free email CTA now opens a prewritten checklist request in the visitor's email app and includes an optional runway snapshot
 - results now include a simple interpretation guide so people know what to do with a 0–3, 3–6, or 6+ month result
 - results now include a bridge planner that shows the monthly-burn gap or upfront cash needed to reach 3 / 6 / 12 months
+- results now include quick what-if comparisons so people can see how a housing reset, bridge income, or both would change their runway before they rewrite the whole budget
 - shareable plain-English snapshot button added for pasting the result to a partner, roommate, friend, or advisor
 - copied snapshots now include the nearest bridge-to-safer-runway line so the summary travels with a next-step number, not just vibes
 - clipboard fallback added so the CTA still works if `mailto:` is flaky

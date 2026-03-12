@@ -40,6 +40,7 @@ This repo is now public-release ready for a first launch pass:
 - results now include a simple interpretation guide so people know what to do with a 0–3, 3–6, or 6+ month result
 - results now include a bridge planner that shows the monthly-burn gap or upfront cash needed to reach 3 / 6 / 12 months
 - results now include quick what-if comparisons so people can see how a housing reset, bridge income, or both would change their runway before they rewrite the whole budget
+- starter scenario cards now preview rough runway before you click, so a new visitor can pick a believable situation faster instead of guessing blind
 - shareable plain-English snapshot button added for pasting the result to a partner, roommate, friend, or advisor
 - exact-result share links added, so the current scenario can be copied/shared as a URL with the numbers loaded on open — no backend required
 - copied snapshots now include the nearest bridge-to-safer-runway line so the summary travels with a next-step number, not just vibes

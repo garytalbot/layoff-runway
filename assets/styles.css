@@ -211,6 +211,13 @@ label {
   gap: 0.4rem;
 }
 
+.preset-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
 .preset-card:hover,
 .preset-card:focus-visible {
   border-color: rgba(56, 189, 248, 0.38);
@@ -233,6 +240,17 @@ label {
   color: var(--muted);
   font-size: 0.95rem;
   line-height: 1.45;
+}
+
+.preset-preview {
+  flex-shrink: 0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(148, 163, 184, 0.08);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 .calculator-grid,

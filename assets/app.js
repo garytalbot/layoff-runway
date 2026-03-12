@@ -14,6 +14,7 @@ const form = document.getElementById('runway-form');
 const presetList = document.getElementById('preset-list');
 const calculateButton = document.getElementById('calculate-button');
 const resetButton = document.getElementById('reset-button');
+const starterStatus = document.getElementById('starter-status');
 const emailCaptureForm = document.getElementById('email-capture-form');
 const captureEmailInput = document.getElementById('capture-email');
 const includeSnapshotCheckbox = document.getElementById('include-snapshot');
@@ -161,6 +162,30 @@ function readNumber(name) {
   return Number.isFinite(value) && value > 0 ? value : 0;
 }
 
+function getStarterPresetPreview(values) {
+  const totalFunds = Math.max(0, (values.savings || 0) + (values.checking || 0) + (values.severance || 0) - (values.oneTimeExpense || 0));
+  const monthlyIncome = (values.unemployment || 0) + (values.otherIncome || 0) + (values.sideIncome || 0);
+  const monthlyExpenses = ['rent', 'utilities', 'groceries', 'insurance', 'transportation', 'debt', 'phoneInternet', 'misc']
+    .reduce((sum, key) => sum + (values[key] || 0), 0);
+  const adjustedExpenses = Math.max(0, monthlyExpenses - (values.plannedCuts || 0));
+  const monthlyBurn = adjustedExpenses - monthlyIncome;
+  const runwayMonths = monthlyBurn > 0 ? totalFunds / monthlyBurn : Infinity;
+
+  if (!Number.isFinite(runwayMonths)) {
+    return { label: 'Cash-flow positive', tone: 'status-good' };
+  }
+
+  if (runwayMonths < 3) {
+    return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-bad' };
+  }
+
+  if (runwayMonths < 6) {
+    return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-warn' };
+  }
+
+  return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-good' };
+}
+
 function updatePresetSelection() {
   if (!presetList) return;
 
@@ -175,14 +200,19 @@ function renderPresetButtons() {
   if (!presetList) return;
 
   presetList.innerHTML = starterPresets
-    .map(
-      (preset) => `
+    .map((preset) => {
+      const preview = getStarterPresetPreview(preset.values);
+
+      return `
         <button class="preset-card" type="button" data-preset-id="${preset.id}" aria-pressed="false">
-          <span class="preset-title">${preset.label}</span>
+          <span class="preset-head">
+            <span class="preset-title">${preset.label}</span>
+            <span class="preset-preview ${preview.tone}">${preview.label}</span>
+          </span>
           <span class="preset-note">${preset.note}</span>
         </button>
-      `
-    )
+      `;
+    })
     .join('');
 
   presetList.addEventListener('click', (event) => {
@@ -201,7 +231,14 @@ function renderPresetButtons() {
     activePreset = preset.id;
     updatePresetSelection();
     render();
-    form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    if (starterStatus) {
+      const preview = getStarterPresetPreview(preset.values);
+      starterStatus.textContent = `Loaded ${preset.label.toLowerCase()} — ${preview.label.toLowerCase()} before you tweak anything.`;
+      starterStatus.className = ['capture-status', preview.tone].join(' ');
+    }
+
+    document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   updatePresetSelection();
@@ -720,12 +757,20 @@ resetButton.addEventListener('click', () => {
   });
   activePreset = 'default';
   updatePresetSelection();
+  if (starterStatus) {
+    starterStatus.textContent = 'Reset to the typical salaried reset example.';
+    starterStatus.className = 'capture-status status-good';
+  }
   render();
 });
 
 form.addEventListener('input', () => {
   activePreset = 'custom';
   updatePresetSelection();
+  if (starterStatus) {
+    starterStatus.textContent = 'Custom scenario loaded. Your edits now override the starter cards.';
+    starterStatus.className = 'capture-status';
+  }
   render();
 });
 

@@ -47,6 +47,7 @@ Then open <http://localhost:8080>.
 - `robots.txt` — crawler rules
 - `sitemap.xml` — sitemap placeholder
 - `netlify.toml` — zero-build Netlify deploy config
+- `docs/launch-assets.md` — X, Indie Hackers, and Hacker News launch/distribution copy
 
 ## Before going fully public
 Current live/public URL target:

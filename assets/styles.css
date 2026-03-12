@@ -242,6 +242,12 @@ label {
   line-height: 1.45;
 }
 
+.preset-detail {
+  color: var(--text);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
 .preset-preview {
   flex-shrink: 0;
   padding: 0.3rem 0.6rem;

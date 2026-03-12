@@ -170,20 +170,27 @@ function getStarterPresetPreview(values) {
   const adjustedExpenses = Math.max(0, monthlyExpenses - (values.plannedCuts || 0));
   const monthlyBurn = adjustedExpenses - monthlyIncome;
   const runwayMonths = monthlyBurn > 0 ? totalFunds / monthlyBurn : Infinity;
+  const biggestLever = Object.entries(expenseLabels)
+    .map(([key, label]) => ({ key, label, value: values[key] || 0 }))
+    .sort((a, b) => b.value - a.value)[0];
+
+  const detail = monthlyBurn > 0
+    ? `Burn ${currency.format(monthlyBurn)} / month · biggest lever ${biggestLever?.label || 'n/a'}`
+    : `Income covers spending · biggest lever ${biggestLever?.label || 'n/a'}`;
 
   if (!Number.isFinite(runwayMonths)) {
-    return { label: 'Cash-flow positive', tone: 'status-good' };
+    return { label: 'Cash-flow positive', tone: 'status-good', detail, biggestLeverLabel: biggestLever?.label || 'n/a' };
   }
 
   if (runwayMonths < 3) {
-    return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-bad' };
+    return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-bad', detail, biggestLeverLabel: biggestLever?.label || 'n/a' };
   }
 
   if (runwayMonths < 6) {
-    return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-warn' };
+    return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-warn', detail, biggestLeverLabel: biggestLever?.label || 'n/a' };
   }
 
-  return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-good' };
+  return { label: `${runwayMonths.toFixed(1)} mo runway`, tone: 'status-good', detail, biggestLeverLabel: biggestLever?.label || 'n/a' };
 }
 
 function updatePresetSelection() {
@@ -210,6 +217,7 @@ function renderPresetButtons() {
             <span class="preset-preview ${preview.tone}">${preview.label}</span>
           </span>
           <span class="preset-note">${preset.note}</span>
+          <span class="preset-detail">${preview.detail}</span>
         </button>
       `;
     })
@@ -234,7 +242,7 @@ function renderPresetButtons() {
 
     if (starterStatus) {
       const preview = getStarterPresetPreview(preset.values);
-      starterStatus.textContent = `Loaded ${preset.label.toLowerCase()} — ${preview.label.toLowerCase()} before you tweak anything.`;
+      starterStatus.textContent = `Loaded ${preset.label.toLowerCase()} — ${preview.label.toLowerCase()} before tweaks. Biggest lever: ${preview.biggestLeverLabel.toLowerCase()}.`;
       starterStatus.className = ['capture-status', preview.tone].join(' ');
     }
 

@@ -31,9 +31,7 @@ const output = {
   monthlyBurn: document.getElementById('monthly-burn'),
   cashOutDate: document.getElementById('cash-out-date'),
   monthlyIncome: document.getElementById('monthly-income'),
-  target3: document.getElementById('target-3'),
-  target6: document.getElementById('target-6'),
-  target12: document.getElementById('target-12'),
+  bridgePlanList: document.getElementById('bridge-plan-list'),
   costCutList: document.getElementById('cost-cut-list'),
   recommendationList: document.getElementById('recommendation-list'),
   runwayZoneTag: document.getElementById('runway-zone-tag'),
@@ -66,6 +64,45 @@ function readNumber(name) {
 function targetSpend(totalFunds, monthlyIncome, months) {
   if (months <= 0) return 0;
   return Math.max(0, totalFunds / months + monthlyIncome);
+}
+
+function calculateRunwayMonths(totalFunds, monthlyBurn) {
+  return monthlyBurn > 0 ? totalFunds / monthlyBurn : Infinity;
+}
+
+function getBridgePlans(totalFunds, monthlyIncome, adjustedExpenses, monthlyBurn, runwayMonths) {
+  return [3, 6, 12].map((months) => {
+    const spendCap = targetSpend(totalFunds, monthlyIncome, months);
+
+    if (!Number.isFinite(runwayMonths) || monthlyBurn <= 0 || runwayMonths >= months) {
+      return {
+        months,
+        spendCap,
+        state: 'covered',
+        headline: 'Already covered',
+        detail:
+          monthlyBurn <= 0
+            ? 'Your current income already covers adjusted spending, so this checkpoint is covered without extra heroics.'
+            : `Current plan already clears ${months} months at today's ${currency.format(monthlyBurn)} monthly burn.`,
+        secondary: `Keep adjusted spending near ${currency.format(adjustedExpenses)} / month and protect the margin.`,
+      };
+    }
+
+    const targetBurn = totalFunds / months;
+    const monthlyGap = Math.max(0, monthlyBurn - targetBurn);
+    const upfrontGap = Math.max(0, monthlyBurn * months - totalFunds);
+
+    return {
+      months,
+      spendCap,
+      monthlyGap,
+      upfrontGap,
+      state: 'gap',
+      headline: `Free up about ${currency.format(monthlyGap)} / month in burn`,
+      detail: `At your current income, keeping adjusted spending near ${currency.format(spendCap)} / month gets you to ${months} months.`,
+      secondary: `Or bridge it with about ${currency.format(upfrontGap)} more cash upfront.`,
+    };
+  });
 }
 
 function getTopExpenseCategories() {
@@ -180,6 +217,7 @@ function buildShareSummary(snapshot) {
   return [
     `Layoff Runway snapshot: about ${snapshot.runwayLabel}, ${snapshot.monthlyBurn} monthly burn, likely cash-out ${snapshot.cashOutDate}.`,
     `Biggest cost lever: ${snapshot.topCostCut}.`,
+    `Bridge plan: ${snapshot.bridgeLine}`,
     `Context: ${snapshot.guidanceTag}. ${snapshot.guidanceCopy}`,
     'Private/no-signup calculator: https://garytalbot.github.io/layoff-runway/',
   ].join(' ');
@@ -270,15 +308,13 @@ function render() {
 
   const adjustedExpenses = Math.max(0, monthlyExpenses - plannedCuts);
   const monthlyBurn = adjustedExpenses - monthlyIncome;
-  const runwayMonths = monthlyBurn > 0 ? totalFunds / monthlyBurn : Infinity;
+  const runwayMonths = calculateRunwayMonths(totalFunds, monthlyBurn);
   const topCuts = getTopExpenseCategories();
+  const bridgePlans = getBridgePlans(totalFunds, monthlyIncome, adjustedExpenses, monthlyBurn, runwayMonths);
 
   output.totalFunds.textContent = currency.format(totalFunds);
   output.monthlyBurn.textContent = monthlyBurn > 0 ? currency.format(monthlyBurn) : currency.format(0);
   output.monthlyIncome.textContent = currency.format(monthlyIncome);
-  output.target3.textContent = currency.format(targetSpend(totalFunds, monthlyIncome, 3));
-  output.target6.textContent = currency.format(targetSpend(totalFunds, monthlyIncome, 6));
-  output.target12.textContent = currency.format(targetSpend(totalFunds, monthlyIncome, 12));
 
   let cashOutLabel = 'Cash-flow positive';
 
@@ -306,6 +342,19 @@ function render() {
         .join('')
     : '<li>No recurring expenses entered yet.</li>';
 
+  output.bridgePlanList.innerHTML = bridgePlans
+    .map(
+      (plan) => `
+        <article class="bridge-plan-item ${plan.state === 'covered' ? 'bridge-plan-covered' : 'bridge-plan-gap'}">
+          <p class="bridge-plan-label">${plan.months} months</p>
+          <p class="bridge-plan-headline">${plan.headline}</p>
+          <p class="bridge-plan-copy">${plan.detail}</p>
+          <p class="bridge-plan-copy bridge-plan-secondary">${plan.secondary}</p>
+        </article>
+      `
+    )
+    .join('');
+
   output.recommendationList.innerHTML = buildRecommendations(normalizedRunwayMonths, monthlyBurn, monthlyIncome, topCuts)
     .map((item) => `<li>${item}</li>`)
     .join('');
@@ -316,6 +365,8 @@ function render() {
   output.scenarioActionList.innerHTML = guidance.actions.map((item) => `<li>${item}</li>`).join('');
   setShareStatus('');
 
+  const nextBridgePlan = bridgePlans.find((plan) => plan.state === 'gap');
+
   latestSnapshot = {
     runwayLabel: Number.isFinite(runwayMonths) ? `${runwayMonths.toFixed(1)} months` : 'cash-flow positive',
     totalFunds: currency.format(totalFunds),
@@ -325,6 +376,9 @@ function render() {
     topCostCut: topCuts[0]
       ? `${topCuts[0].label} (${currency.format(topCuts[0].value)} / month)`
       : 'No recurring expenses entered yet',
+    bridgeLine: nextBridgePlan
+      ? `to reach ${nextBridgePlan.months} months, free up about ${currency.format(nextBridgePlan.monthlyGap)} / month in burn or add about ${currency.format(nextBridgePlan.upfrontGap)} upfront.`
+      : 'your current plan already clears the common 3, 6, and 12 month checkpoints.',
     guidanceTag: guidance.tag,
     guidanceCopy: guidance.copy,
   };

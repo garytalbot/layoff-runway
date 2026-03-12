@@ -94,24 +94,46 @@
     <div class="page-shell">
       <header class="site-header">
         <div>
+          <div class="marquee-strip" aria-hidden="true">
+            <span>Emergency budgeting</span>
+            <span>tiny pink calculator cabinet</span>
+            <span>private by default</span>
+          </div>
           <p class="eyebrow">Post-layoff survival planning</p>
           <h1>How long can you survive after a layoff?</h1>
           <p class="hero-copy">
             Plug in your cash, severance, unemployment, and monthly costs. Get a clear runway number,
             a likely cash-out date, and the first expenses worth attacking.
           </p>
+          <div class="hero-stickers" aria-label="Tone-setting callouts">
+            <span class="sticker sticker-pink">No signup goblin</span>
+            <span class="sticker sticker-gold">Runs in your browser</span>
+            <span class="sticker sticker-mint">Rough numbers welcome</span>
+          </div>
           <div class="hero-actions">
             <a class="button button-primary" href="#calculator">Calculate my runway</a>
             <a class="button button-secondary" href="#plan">See the 7-day action plan</a>
           </div>
         </div>
         <aside class="hero-card">
+          <div class="machine-face" aria-hidden="true">
+            <div class="machine-screen">
+              <span class="machine-screen-label">Runway meter</span>
+              <strong>Insert honest numbers</strong>
+            </div>
+            <div class="machine-slots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
           <p class="hero-card-label">What you get in under 2 minutes</p>
           <ul>
             <li>No signup required</li>
             <li>Private, instant estimate</li>
             <li>Built for real post-layoff planning</li>
           </ul>
+          <p class="hero-card-note">Think of it like a weird little vending machine for clarity. Press buttons, receive slightly calmer brain.</p>
         </aside>
       </header>
 
@@ -244,7 +266,10 @@
           </div>
 
           <div class="results-hero">
-            <p class="results-kicker">Estimated runway</p>
+            <div class="results-hero-topline">
+              <p class="results-kicker">Estimated runway</p>
+              <p class="results-chip">Panic, but with better lighting</p>
+            </div>
             <p class="runway-number"><span id="runway-months">0.0</span> months</p>
             <p id="summary-text" class="summary-text"></p>
           </div>

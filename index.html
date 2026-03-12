@@ -29,6 +29,49 @@
       content="Estimate how many months you can stay afloat after a layoff using your cash, severance, unemployment, and monthly expenses."
     />
     <meta name="twitter:image" content="https://garytalbot.github.io/layoff-runway/assets/og-card.svg" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "Layoff Runway",
+            "url": "https://garytalbot.github.io/layoff-runway/",
+            "description": "A brutally simple layoff runway calculator for estimating months of financial runway after a layoff.",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Does Layoff Runway save my numbers?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. The calculator runs entirely in your browser and does not require an account to estimate your runway."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is this financial advice?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Layoff Runway is an educational estimate to help you think through cash, burn, and timing after a layoff."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What numbers should I use?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Use practical after-tax estimates for cash, severance, unemployment, and your real monthly costs. Rough-but-honest numbers are better than fake precision."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
     <link rel="stylesheet" href="assets/styles.css" />
   </head>
   <body>
@@ -57,6 +100,21 @@
       </header>
 
       <main>
+        <section class="trust-strip" aria-label="Trust signals">
+          <article>
+            <p class="trust-label">Private by default</p>
+            <p>The calculator runs in your browser. No account, no bank connection, no weird little data vacuum.</p>
+          </article>
+          <article>
+            <p class="trust-label">Fast enough to use under stress</p>
+            <p>Use rough numbers and get a clear runway estimate in under two minutes instead of spiraling in twelve tabs.</p>
+          </article>
+          <article>
+            <p class="trust-label">Plain-English output</p>
+            <p>You get runway months, burn rate, a likely cash-out date, and the first expense levers worth checking.</p>
+          </article>
+        </section>
+
         <section id="calculator" class="panel calculator-panel">
           <div class="section-heading">
             <p class="eyebrow">Calculator</p>
@@ -221,16 +279,51 @@
 
         <section class="panel cta-panel">
           <div>
-            <p class="eyebrow">Monetization-ready CTA</p>
+            <p class="eyebrow">Lead capture</p>
             <h2>Get the layoff survival checklist</h2>
             <p>
-              First MVP version: a simple email box to validate interest before bolting on anything heavier.
+              A tight follow-up offer for launch: collect interest now, then wire it to Buttondown, Beehiiv,
+              or ConvertKit when the email rail is ready.
             </p>
+            <p class="cta-note">No email is stored yet in this MVP. The box is here to validate the offer before plumbing it in.</p>
           </div>
-          <form class="email-capture" onsubmit="event.preventDefault(); alert('Email capture is intentionally not wired yet. Connect Buttondown, Beehiiv, or ConvertKit before launch.');">
+          <form class="email-capture" onsubmit="event.preventDefault(); alert('Email capture is still a placeholder in this MVP. Wire Buttondown, Beehiiv, or ConvertKit before launch traffic hits.');">
             <input type="email" placeholder="you@example.com" aria-label="Email address" />
             <button class="button button-primary" type="submit">Send me the checklist</button>
           </form>
+        </section>
+
+        <section id="faq" class="panel faq-panel">
+          <div class="section-heading">
+            <p class="eyebrow">FAQ</p>
+            <h2>Quick answers before you trust a calculator with your panic</h2>
+          </div>
+          <div class="faq-grid">
+            <article class="faq-card">
+              <h3>Does this save my numbers?</h3>
+              <p>
+                No. The calculation happens in your browser. There is no account, no login, and no saved profile required to use it.
+              </p>
+            </article>
+            <article class="faq-card">
+              <h3>Is this financial advice?</h3>
+              <p>
+                Also no. It is an educational estimate meant to help you think through cash, timing, and tradeoffs after a layoff.
+              </p>
+            </article>
+            <article class="faq-card">
+              <h3>What numbers should I use?</h3>
+              <p>
+                Use honest after-tax estimates for cash, severance, unemployment, and monthly costs. Rough-but-real beats fake precision every time.
+              </p>
+            </article>
+            <article class="faq-card">
+              <h3>Who is this for?</h3>
+              <p>
+                People who just got laid off, expect a layoff soon, or need a simple runway check without adopting an entire budgeting religion.
+              </p>
+            </article>
+          </div>
         </section>
       </main>
 

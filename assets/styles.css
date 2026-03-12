@@ -38,7 +38,8 @@ body {
 }
 
 .site-header,
-.panel {
+.panel,
+.trust-strip article {
   backdrop-filter: blur(18px);
   background: var(--panel);
   border: 1px solid var(--panel-border);
@@ -158,9 +159,35 @@ label {
 .calculator-grid,
 .detail-grid,
 .stats-grid,
-.checklist-grid {
+.checklist-grid,
+.trust-strip,
+.faq-grid {
   display: grid;
   gap: 1rem;
+}
+
+.trust-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 1.5rem;
+}
+
+.trust-strip article {
+  padding: 1.15rem 1.2rem;
+}
+
+.trust-label {
+  margin: 0 0 0.45rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.trust-strip article p:last-child,
+.cta-note,
+.faq-card p {
+  color: var(--muted);
 }
 
 .calculator-grid {
@@ -170,7 +197,8 @@ label {
 
 fieldset,
 .stat-card,
-.detail-card {
+.detail-card,
+.faq-card {
   border: 1px solid rgba(148, 163, 184, 0.12);
   border-radius: 18px;
   background: rgba(15, 23, 42, 0.72);
@@ -242,8 +270,17 @@ input:focus {
 }
 
 .stat-card,
-.detail-card {
+.detail-card,
+.faq-card {
   padding: 1.2rem;
+}
+
+.faq-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.faq-card h3 {
+  margin-bottom: 0.5rem;
 }
 
 .stat-value {
@@ -321,7 +358,9 @@ input:focus {
   .stats-grid,
   .detail-grid,
   .checklist-grid,
-  .cta-panel {
+  .cta-panel,
+  .trust-strip,
+  .faq-grid {
     grid-template-columns: 1fr;
   }
 

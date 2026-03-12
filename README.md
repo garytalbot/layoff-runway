@@ -21,6 +21,8 @@ It gives people a fast estimate of:
 This repo is now public-release ready for a first launch pass:
 - basic SEO and social metadata added
 - favicon + social share card added
+- FAQPage structured data added for better search/legitimacy signals
+- trust / privacy / disclaimer copy added so the page explains itself faster
 - web manifest, robots.txt, sitemap.xml added
 - MIT license added
 - Netlify config added with a few sensible security headers

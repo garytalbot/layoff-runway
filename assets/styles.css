@@ -878,7 +878,9 @@ input:focus {
   .cta-panel,
   .trust-strip,
   .faq-grid,
-  .preset-list {
+  .preset-list,
+  .prep-grid,
+  .prep-panel-header {
     grid-template-columns: 1fr;
   }
 

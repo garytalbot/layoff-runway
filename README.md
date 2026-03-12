@@ -61,7 +61,7 @@ Then open <http://localhost:8080>.
 - `index.html` — landing page and calculator UI
 - `assets/styles.css` — styling
 - `assets/app.js` — calculator logic
-- `assets/favicon.svg` — favicon
+- `assets/favicon.svg` plus derived app icons (`favicon-16.png`, `favicon-32.png`, `favicon.ico`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) — favicon/app-icon surface
 - `assets/og-card.svg` — social share image
 - `site.webmanifest` — install metadata
 - `robots.txt` — crawler rules

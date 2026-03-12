@@ -1,0 +1,17 @@
+{
+  "name": "Layoff Runway",
+  "short_name": "Runway",
+  "description": "Estimate how long your cash lasts after a layoff.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020817",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

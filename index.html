@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Layoff Runway — Estimate how long your cash lasts after a layoff</title>
+    <meta
+      name="description"
+      content="A brutally simple layoff runway calculator. Estimate how many months you can stay afloat, your monthly burn, your cash-out date, and what to cut first."
+    />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://example.com/" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="site.webmanifest" />
+    <meta property="og:title" content="Layoff Runway" />
+    <meta
+      property="og:description"
+      content="Estimate how many months you can stay afloat after a layoff using your cash, severance, unemployment, and monthly expenses."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://example.com/" />
+    <meta property="og:image" content="https://example.com/assets/og-card.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Layoff Runway" />
+    <meta
+      name="twitter:description"
+      content="Estimate how many months you can stay afloat after a layoff using your cash, severance, unemployment, and monthly expenses."
+    />
+    <meta name="twitter:image" content="https://example.com/assets/og-card.svg" />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div>
+          <p class="eyebrow">Post-layoff survival planning</p>
+          <h1>How long can you survive after a layoff?</h1>
+          <p class="hero-copy">
+            Plug in your cash, severance, unemployment, and monthly costs. Get a clear runway number,
+            a likely cash-out date, and the first expenses worth attacking.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#calculator">Calculate my runway</a>
+            <a class="button button-secondary" href="#plan">See the 7-day action plan</a>
+          </div>
+        </div>
+        <aside class="hero-card">
+          <p class="hero-card-label">What you get in under 2 minutes</p>
+          <ul>
+            <li>No signup required</li>
+            <li>Private, instant estimate</li>
+            <li>Built for real post-layoff planning</li>
+          </ul>
+        </aside>
+      </header>
+
+      <main>
+        <section id="calculator" class="panel calculator-panel">
+          <div class="section-heading">
+            <p class="eyebrow">Calculator</p>
+            <h2>Estimate your runway</h2>
+            <p>
+              Use rough numbers. This is about getting an honest picture fast, not pretending your life
+              is a spreadsheet blessed by mountain monks.
+            </p>
+          </div>
+
+          <form id="runway-form" class="calculator-grid">
+            <fieldset>
+              <legend>Money available now</legend>
+              <label>
+                Cash savings
+                <input type="number" min="0" step="100" name="savings" value="18000" />
+              </label>
+              <label>
+                Checking balance available
+                <input type="number" min="0" step="100" name="checking" value="4500" />
+              </label>
+              <label>
+                Severance total (after-tax estimate)
+                <input type="number" min="0" step="100" name="severance" value="9000" />
+              </label>
+              <label>
+                One-time upcoming expense
+                <input type="number" min="0" step="100" name="oneTimeExpense" value="0" />
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Monthly income during the runway</legend>
+              <label>
+                Unemployment / month
+                <input type="number" min="0" step="50" name="unemployment" value="1800" />
+              </label>
+              <label>
+                Other income / month
+                <input type="number" min="0" step="50" name="otherIncome" value="0" />
+              </label>
+              <label>
+                Freelance / side income / month
+                <input type="number" min="0" step="50" name="sideIncome" value="400" />
+              </label>
+              <label>
+                Planned expense cuts / month
+                <input type="number" min="0" step="50" name="plannedCuts" value="250" />
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Monthly expenses</legend>
+              <label>
+                Rent / mortgage
+                <input type="number" min="0" step="50" name="rent" value="2200" />
+              </label>
+              <label>
+                Utilities
+                <input type="number" min="0" step="25" name="utilities" value="220" />
+              </label>
+              <label>
+                Groceries
+                <input type="number" min="0" step="25" name="groceries" value="450" />
+              </label>
+              <label>
+                Insurance
+                <input type="number" min="0" step="25" name="insurance" value="380" />
+              </label>
+              <label>
+                Transportation
+                <input type="number" min="0" step="25" name="transportation" value="240" />
+              </label>
+              <label>
+                Debt payments
+                <input type="number" min="0" step="25" name="debt" value="320" />
+              </label>
+              <label>
+                Phone / internet
+                <input type="number" min="0" step="25" name="phoneInternet" value="140" />
+              </label>
+              <label>
+                Subscriptions / misc
+                <input type="number" min="0" step="25" name="misc" value="160" />
+              </label>
+            </fieldset>
+          </form>
+
+          <div class="form-actions">
+            <button class="button button-primary" id="calculate-button" type="button">Show my runway</button>
+            <button class="button button-secondary" id="reset-button" type="button">Reset example numbers</button>
+          </div>
+        </section>
+
+        <section id="results" class="panel results-panel" aria-live="polite">
+          <div class="section-heading">
+            <p class="eyebrow">Results</p>
+            <h2>Your layoff runway snapshot</h2>
+          </div>
+
+          <div class="results-hero">
+            <p class="results-kicker">Estimated runway</p>
+            <p class="runway-number"><span id="runway-months">0.0</span> months</p>
+            <p id="summary-text" class="summary-text"></p>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <p class="stat-label">Total available funds</p>
+              <p class="stat-value" id="total-funds">$0</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Monthly burn</p>
+              <p class="stat-value" id="monthly-burn">$0</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Cash-out date</p>
+              <p class="stat-value" id="cash-out-date">—</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Monthly income</p>
+              <p class="stat-value" id="monthly-income">$0</p>
+            </article>
+          </div>
+
+          <div class="detail-grid">
+            <article class="detail-card">
+              <h3>Target spend to hit a longer runway</h3>
+              <ul class="target-list">
+                <li>For 3 months: <strong id="target-3">$0</strong></li>
+                <li>For 6 months: <strong id="target-6">$0</strong></li>
+                <li>For 12 months: <strong id="target-12">$0</strong></li>
+              </ul>
+            </article>
+
+            <article class="detail-card">
+              <h3>Biggest cost-cut targets</h3>
+              <ol id="cost-cut-list" class="cost-cut-list"></ol>
+            </article>
+
+            <article class="detail-card">
+              <h3>Survival summary</h3>
+              <ul id="recommendation-list" class="recommendation-list"></ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="plan" class="panel plan-panel">
+          <div class="section-heading">
+            <p class="eyebrow">Next 7 days</p>
+            <h2>A sane first-week action plan</h2>
+          </div>
+          <div class="checklist-grid">
+            <label><input type="checkbox" /> Apply for unemployment immediately</label>
+            <label><input type="checkbox" /> Pause subscriptions and small recurring junk</label>
+            <label><input type="checkbox" /> Move emergency cash where bills get paid</label>
+            <label><input type="checkbox" /> Call landlord, lenders, or card issuers early if needed</label>
+            <label><input type="checkbox" /> Reduce the single biggest monthly expense first</label>
+            <label><input type="checkbox" /> Build a 30-day bare-minimum spending plan</label>
+          </div>
+        </section>
+
+        <section class="panel cta-panel">
+          <div>
+            <p class="eyebrow">Monetization-ready CTA</p>
+            <h2>Get the layoff survival checklist</h2>
+            <p>
+              First MVP version: a simple email box to validate interest before bolting on anything heavier.
+            </p>
+          </div>
+          <form class="email-capture" onsubmit="event.preventDefault(); alert('Email capture is intentionally not wired yet. Connect Buttondown, Beehiiv, or ConvertKit before launch.');">
+            <input type="email" placeholder="you@example.com" aria-label="Email address" />
+            <button class="button button-primary" type="submit">Send me the checklist</button>
+          </form>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Educational estimate only. Not financial, legal, or tax advice.</p>
+        <p>Your numbers stay in the browser. No signup required to calculate.</p>
+      </footer>
+    </div>
+
+    <script src="assets/app.js"></script>
+  </body>
+</html>

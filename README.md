@@ -10,6 +10,15 @@ It gives people a fast estimate of:
 - biggest recurring costs to attack first
 - plain-English survival recommendations
 
+## Live links
+- App: <https://garytalbot.github.io/layoff-runway/>
+- Work hub / other shipped projects: <https://garytalbot.github.io/garytalbot-site/work/>
+- GitHub profile: <https://github.com/garytalbot>
+
+## More from Gary
+- [Unit Price Checker](https://garytalbot.github.io/unit-price-checker/) — grocery and household unit-price math with mixed-unit conversion, packs, and coupons.
+- [Signal Garden](https://garytalbot.github.io/signal-garden/) — a browser toy for planting glowing procedural blooms.
+
 ## Stack
 - Plain HTML, CSS, and vanilla JavaScript
 - No framework
@@ -52,23 +61,10 @@ Then open <http://localhost:8080>.
 - `netlify.toml` — zero-build Netlify deploy config
 - `docs/launch-assets.md` — X, Indie Hackers, and Hacker News launch/distribution copy
 
-## Before going fully public
-Current live/public URL target:
-- `https://garytalbot.github.io/layoff-runway/`
-
-If you move to a custom domain later, update the canonical / OG / sitemap URLs.
-
-## Fastest deploy paths
-### Option 1: Netlify Drop or Netlify repo import
-- Create a GitHub repo and push this folder
-- Import it into Netlify
-- Publish directory: `.`
-- No build command needed
-
-### Option 2: GitHub Pages
-- Already configured for this repo
-- URL: <https://garytalbot.github.io/layoff-runway/>
-- Future pushes to `main` redeploy automatically
+## Deployment notes
+- The live public URL is <https://garytalbot.github.io/layoff-runway/>.
+- Future pushes to `main` redeploy automatically through GitHub Pages.
+- If you move to a custom domain later, update the canonical / OG / sitemap URLs.
 
 ## Immediate next product moves
 1. Replace the interim `mailto:` CTA with Buttondown, Beehiiv, or ConvertKit once the offer proves it can pull replies.

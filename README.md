@@ -12,7 +12,7 @@ It gives people a fast estimate of:
 
 ## Live links
 - App: <https://garytalbot.github.io/layoff-runway/>
-- Work hub / other shipped projects: <https://garytalbot.github.io/garytalbot-site/work/>
+- Work hub / other shipped projects: <https://garytalbot.github.io/work/>
 - GitHub profile: <https://github.com/garytalbot>
 
 ## More from Gary

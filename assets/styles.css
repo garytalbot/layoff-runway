@@ -603,6 +603,26 @@ input:focus {
   margin-top: 1rem;
 }
 
+.payment-clarity-callout {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(125, 242, 186, 0.2);
+  background: linear-gradient(180deg, rgba(125, 242, 186, 0.12), rgba(125, 242, 186, 0.05));
+}
+
+.payment-clarity-title {
+  margin-bottom: 0.35rem;
+  color: #ddfff0;
+  font-weight: 800;
+}
+
+.payment-clarity-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+}
+
 .results-cta-note {
   margin: 0.7rem 0 0;
   color: var(--muted);

@@ -519,8 +519,8 @@ function buildShareSummary(snapshot) {
   return [
     `Layoff Runway snapshot: about ${snapshot.runwayLabel}, ${snapshot.monthlyBurn} monthly burn, likely cash-out ${snapshot.cashOutDate}.`,
     `Biggest cost lever: ${snapshot.topCostCut}.`,
-    `Bridge plan: ${snapshot.bridgeLine}`,
-    snapshot.bestComparison ? `Quick what-if: ${snapshot.bestComparison}` : '',
+    `Bridge to a safer runway: ${snapshot.bridgeLine}`,
+    snapshot.bestComparison ? `Best quick what-if: ${snapshot.bestComparison}` : '',
     `Context: ${snapshot.guidanceTag}. ${snapshot.guidanceCopy}`,
     `Private/no-signup calculator: ${snapshot.shareUrl || 'https://garytalbot.github.io/layoff-runway/'}`,
   ]
